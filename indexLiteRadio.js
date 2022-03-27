@@ -1,4 +1,4 @@
-const serialport = require('serialport')
+const { SerialPort } = require('serialport')
 const semver = require('semver')
 var liteRadio_configurator_version ="v1.1.1-RC1";
 var {shell} = require('electron')
@@ -76,12 +76,12 @@ HidConfig = {
 
     //要开启开关机状态
     LiteRadio_power:true,
-    
+
     //当前使用的协议
     current_protocol:0,
     //支持的功率
     support_power:0,
-    
+
     //遥控器型号
     lite_radio_device:0,
 
@@ -161,7 +161,7 @@ HidConfig = {
     //内外置射频模块开关
     Internal_radio_module_switch:0,
     External_radio_module_switch:0,
-    
+
 
     //ExpressLRS系统参数配置
     ExpressLRS_power_option_value:null,
@@ -171,7 +171,7 @@ HidConfig = {
 
 
     //外置射频模块供电开关
-    External_radio_module_power_switch:null,    
+    External_radio_module_power_switch:null,
 
      //内部射频模块配置信息
     internal_radio_protocol:0,
@@ -184,7 +184,7 @@ HidConfig = {
     //用于首次连接HID设备时，判断是否有接收到遥控器HID数据，若只识别到HID设备但无数据接收则判断为连接失败
     Have_Receive_HID_Data:false,
 
-    
+
     bind_phrase_switch:false,
     bind_phrase_input:0,
     uid_bytes:0,
@@ -208,7 +208,7 @@ HidConfig.compareFirmwareVersion = function(){
         }
     }
 
-    
+
 }
 
 //让遥控器停止发送配置信息
@@ -242,30 +242,30 @@ function channel_data_map(input,Omin,Omax,Nmin,Nmax){
 }
 
 
-function isExistOption(id,value) {  
-    var isExist = false;  
-    var count = $('#'+id).find('option').length;  
+function isExistOption(id,value) {
+    var isExist = false;
+    var count = $('#'+id).find('option').length;
 
-      for(var i=0;i<count;i++)     
-      {     
-         if($('#'+id).get(0).options[i].value == value)     
-        {     
-            isExist = true;     
-            break;     
-        }     
-    }     
-    return isExist;  
-} 
+      for(var i=0;i<count;i++)
+      {
+         if($('#'+id).get(0).options[i].value == value)
+        {
+            isExist = true;
+            break;
+        }
+    }
+    return isExist;
+}
 
-function addOptionValue(id,value,text) {  
-    if(!isExistOption(id,value)){$('#'+id).append("<option value="+value+">"+text+"</option>");}      
-} 
+function addOptionValue(id,value,text) {
+    if(!isExistOption(id,value)){$('#'+id).append("<option value="+value+">"+text+"</option>");}
+}
 
 async function listSerialPorts() {
-    await serialport.list().then((ports, err) => {
+    await SerialPort.list().then((ports, err) => {
         if(ports.length!==lastPortCount){
-            $('#port option').each(function(){ 
-                $(this).remove(); 
+            $('#port option').each(function(){
+                $(this).remove();
             } );
         }
 
@@ -298,7 +298,7 @@ window.onload=function(){
           }else{
             shell.openExternal("https://github.com/BETAFPV/BETAFPV_Configurator/blob/master/docs/UnableToFindSerialPort_EN.md");
           }
-          
+
         }
 
     $('label[id="liteRadio_configurator_version"]').text(liteRadio_configurator_version);
@@ -334,7 +334,7 @@ window.onload=function(){
                     }
                 }, 1500);
 
-                hidDevice.on('data', function(data) {//解析遥控器发送过来的信息 
+                hidDevice.on('data', function(data) {//解析遥控器发送过来的信息
                     let rquestBuffer = new Buffer.alloc(64);
                     if(data[0] == Command_ID.CHANNELS_INFO_ID && HidConfig.LiteRadio_power == false)//通道配置信息
                     {
@@ -342,7 +342,7 @@ window.onload=function(){
                         var checkSum2=0;
                         for(i=0;i<7;i++){
                             checkSum +=data[2*i] & 0x00ff;
-                        }                
+                        }
                         checkSum2 = data[15]<<8 | data[14];
                         if(checkSum == checkSum2){
                             switch(data[1])//判断是哪个通道
@@ -394,7 +394,7 @@ window.onload=function(){
                                     HidConfig.ch4_reverse_display = data[3];
                                     HidConfig.ch4_scale_display = data[4];
                                     HidConfig.ch4_offset_display = data[5]-100;
-                                    
+
                                     //请求通道5配置
                                     if(ch_receive_step==3){
                                         ch_receive_step=4;
@@ -408,7 +408,7 @@ window.onload=function(){
                                     HidConfig.ch5_reverse_display = data[3];
                                     HidConfig.ch5_scale_display = data[4];
                                     HidConfig.ch5_offset_display = data[5]-100;
-                                    
+
                                     //请求通道6配置
                                     if(ch_receive_step==4){
                                         ch_receive_step=5;
@@ -422,7 +422,7 @@ window.onload=function(){
                                     HidConfig.ch6_reverse_display = data[3];
                                     HidConfig.ch6_scale_display = data[4];
                                     HidConfig.ch6_offset_display = data[5]-100;
-                                    
+
                                     //请求通道7配置
                                     if(ch_receive_step==5){
                                         ch_receive_step=6;
@@ -436,7 +436,7 @@ window.onload=function(){
                                     HidConfig.ch7_reverse_display = data[3];
                                     HidConfig.ch7_scale_display = data[4];
                                     HidConfig.ch7_offset_display = data[5]-100;
-                                    
+
                                     //请求通道8配置
                                     if(ch_receive_step==6){
                                         ch_receive_step=7;
@@ -462,24 +462,24 @@ window.onload=function(){
                                         }
                                         show.refreshUI();
                                     }, 500);
-                                    
+
                                     break;
                             }
-                            
+
                         }
-                        
+
                     }
                     else if(data[0] == Command_ID.Lite_CONFIGER_INFO_ID && HidConfig.LiteRadio_power == false)//遥控器配置信息（硬件版本、支持协议、左右手油门、功率）
                     {
-                        
+
                         var checkSum=0;
                         var checkSum2=0;
                         for(i=0;i<7;i++)
                         {
                             checkSum +=data[2*i] & 0x00ff;
-                        }                   
+                        }
                         checkSum2 = data[15]<<8 | data[14] ;
-    
+
                         if(checkSum == checkSum2)//校验通过
                         {
                             console.log("receive lite radio config");
@@ -494,10 +494,10 @@ window.onload=function(){
                             show.rocker_mode = $('select[name="radiomode"]');
                             show.rocker_mode.val(HidConfig.rocker_mode);
                             document.getElementById("rocker_mode").disabled = false;
-                            
+
                             if(HidConfig.internal_radio==RFmodule.CC2500){//内置射频模块型号为：cc2500
                                 console.log("HidConfig.current_protocol:"+HidConfig.current_protocol);
-                                
+
                                 $('#internal_radio_protocol').empty();
                                 addOptionValue('internal_radio_protocol',0,"Frsky_D16_FCC");
                                 addOptionValue('internal_radio_protocol',1,"Frsky_D16_LBT");
@@ -519,7 +519,7 @@ window.onload=function(){
                                     hidDevice.write(rquestBuffer);
                                     ch_receive_step = 0;
                                 }else{//cc2500 使用外置射频模块
-                                    
+
                                     HidConfig.Internal_radio_module_switch = false;
                                     HidConfig.External_radio_module_switch = true;
                                     document.getElementById('internal_radio_module_switch').checked = HidConfig.Internal_radio_module_switch;
@@ -534,10 +534,10 @@ window.onload=function(){
                                      rquestBuffer[2] = 0x01;
                                      rquestBuffer[3] = 0x00;
                                      hidDevice.write(rquestBuffer);
- 
- 
+
+
                                      document.getElementById("External_radio_module_power_switch").checked = true;
- 
+
                                      //延时一小段时间等待外部ExpressLRS启动后再取获取配置信息
                                      setTimeout(function loadLanguage() {
                                          rquestBuffer[0] = 0x00;//获取外置射频模块配置信息
@@ -547,11 +547,11 @@ window.onload=function(){
                                          hidDevice.write(rquestBuffer);
                                      },300);
                                 }
-                    
-                               
 
-                           
-                                
+
+
+
+
                             }else if(HidConfig.internal_radio==RFmodule.SX1280){//硬件型号为：sx1280
                                 $("#internal_radio_protocol_elrs_2.4G").css({display: 'block'});
                                 $("#internal_radio_protocol_Frsky_F8").css({display: 'none'});
@@ -593,26 +593,26 @@ window.onload=function(){
                                         hidDevice.write(rquestBuffer);
                                     },300);
 
-                                    
+
 
                                 }
                             }else if(HidConfig.internal_radio==RFmodule.sx1276){//硬件型号为：sx1276
 
                             }
-                        }                 
+                        }
                     }
                     else if(data[0] == Command_ID.INTERNAL_CONFIGER_INFO_ID && HidConfig.LiteRadio_power == false)
                     {
-                        
+
                         var checkSum=0;
                         var checkSum2=0;
 
                         for(i=0;i<7;i++)
                         {
                             checkSum +=data[2*i] & 0x00ff;
-                        }                   
+                        }
                         checkSum2 = data[15]<<8 | data[14] ;
-    
+
                         if(checkSum == checkSum2)
                         {
                             console.log("receive internal radio config");
@@ -640,20 +640,20 @@ window.onload=function(){
                             document.getElementById('internal_radio_module_switch').checked = true;
                             document.getElementById('external_radio_module_switch').checked = false;
                             //外部射频模块供电开关失能
-                            document.getElementById("External_radio_module_power_switch").disabled = true; 
+                            document.getElementById("External_radio_module_power_switch").disabled = true;
 
                             //ExpressLRS系统可设置
                             document.getElementById("ExpressLRS_power_option_box").disabled = false;
                             document.getElementById("ExpressLRS_pkt_rate_option_box").disabled = false;
                             document.getElementById("ExpressLRS_tlm_option_box").disabled = false;
-                            
+
                             document.getElementById("externalRadioBinding").style.display="none";
                             document.getElementById("externalRadioWifiUpdate").style.display="none";
 
 
-                         
+
                             document.getElementById("content_EspressLRS_bindPhrase").style.display="block";
-                           
+
                              //接着请求遥控器通道配置信息
                             rquestBuffer[0] = 0x00;
                             rquestBuffer[1] = 0x11;
@@ -661,19 +661,19 @@ window.onload=function(){
                             rquestBuffer[3] = 0x01;
                             hidDevice.write(rquestBuffer);
                             ch_receive_step = 0;
-                        }                
+                        }
                     }
                     else if(data[0] == Command_ID.EXTERNAL_CONFIGER_INFO_ID && HidConfig.LiteRadio_power == false){
-                        
+
                         var checkSum=0;
                         var checkSum2=0;
 
                         for(i=0;i<7;i++)
                         {
                             checkSum +=data[2*i] & 0x00ff;
-                        }                   
+                        }
                         checkSum2 = data[15]<<8 | data[14] ;
-    
+
                         if(checkSum == checkSum2)
                         {
                             console.log("receive external radio config");
@@ -681,7 +681,7 @@ window.onload=function(){
                             HidConfig.External_radio_module_switch = true;
                             document.getElementById('internal_radio_module_switch').checked = false;
                             document.getElementById('external_radio_module_switch').checked = true;
-                           
+
 
                             if(data[5] == 0x02){//需要根据外部射频模块硬件型号设置组件可选包率
                                 //外部射频模块可选包率：
@@ -755,10 +755,10 @@ window.onload=function(){
                                 show.ExpressLRS_power_option_box.val(HidConfig.ExpressLRS_power_option_value);
                                 show.ExpressLRS_pkt_rate_option_box.val(HidConfig.ExpressLRS_pkt_rate_option_value);
                                 show.ExpressLRS_tlm_option_box.val(HidConfig.ExpressLRS_tlm_option_value);
-                                                        
+
 
                                 //外部射频模块供电开关使能
-                                document.getElementById("External_radio_module_power_switch").disabled = false; 
+                                document.getElementById("External_radio_module_power_switch").disabled = false;
 
                                 //ExpressLRS系统可设置
                                 document.getElementById("ExpressLRS_power_option_box").disabled = false;
@@ -769,7 +769,7 @@ window.onload=function(){
 
                             }else{
                             }
-                            
+
                             //请求遥控器通道配置信息
                             rquestBuffer[0] = 0x00;
                             rquestBuffer[1] = 0x11;
@@ -785,9 +785,9 @@ window.onload=function(){
                         for(i=0;i<7;i++)
                         {
                             checkSum +=data[2*i] & 0x00ff;
-                        }                   
+                        }
                         checkSum2 = data[15]<<8 | data[14] ;
-    
+
                         if(checkSum == checkSum2)
                         {
                            console.log("DEVICE_INFO_ID");
@@ -861,9 +861,9 @@ window.onload=function(){
                         for(i=0;i<7;i++)
                         {
                             checkSum +=data[2*i] & 0x00ff;
-                        }                   
+                        }
                         checkSum2 = data[15]<<8 | data[14] ;
-    
+
                         if(checkSum == checkSum2)
                         {
                             console.log("EXTRA_CUSTOM_CONFIG_ID:");
@@ -895,7 +895,7 @@ window.onload=function(){
                         HidConfig.channel_data_dispaly[5] = channel_data_map(HidConfig.channel_data[5],0,2047,-100,100);
                         HidConfig.channel_data_dispaly[6] = channel_data_map(HidConfig.channel_data[6],0,2047,-100,100);
                         HidConfig.channel_data_dispaly[7] = channel_data_map(HidConfig.channel_data[7],0,2047,-100,100);
-                    }               
+                    }
                 } );
                 hidDevice.on("error", function(err) {
                     hidDevice.close();
@@ -949,10 +949,10 @@ window.onload=function(){
 
         }
     });
-    
+
     const ui_tabs = $('#tabs > ul');
     $('a', ui_tabs).click(function () {
-        if ($(this).parent().hasClass('active') === false && !GUI.tab_switch_in_progress) { 
+        if ($(this).parent().hasClass('active') === false && !GUI.tab_switch_in_progress) {
             const self = this;
             const tabClass = $(self).parent().prop('class');
 
@@ -983,17 +983,17 @@ window.onload=function(){
                 // display loading screen
                 $('#cache .data-loading').clone().appendTo(content);
                 $('div#connectbutton a.connect').addClass('disabled');
-                
+
 
                 if($('div#hidbutton a.connect').hasClass('disabled'))
                 {
                     $('div#hidbutton a.connect').removeClass('disabled');
                 }
-                
+
                 function content_ready() {
                     GUI.tab_switch_in_progress = false;
                 }
-           
+
                 switch (tab) {
                     case 'landing':
                         landing.initialize(content_ready);
@@ -1005,7 +1005,7 @@ window.onload=function(){
                         break;
                     case 'show':
                         show.initialize(content_ready);
-                        break;   
+                        break;
                     default:
                         console.log(`Tab not found: ${tab}`);
                 }
@@ -1013,7 +1013,7 @@ window.onload=function(){
         }
     });
     firmware_flasher_LiteRadio.connect_init();
-    
+
     i18n.init();
     $('#tabs ul.mode-disconnected li a:first').click();
 }

@@ -35,3 +35,7 @@ LiteRadio.json
 board.json
 *.bin
 package-lock.json
+
+# Generater resources
+Linux/
+Mac/
