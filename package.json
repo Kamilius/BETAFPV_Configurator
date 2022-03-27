@@ -4,6 +4,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "postinstall": "electron-rebuild",
     "package-win": "electron-packager . BETAFPV_Configurator --platform=win32 --arch=x64  --out=./Windows --app-version=1.1.0 --overwrite --icon=./BETAFPV_ICO.ico",
     "package-linux": "electron-packager . BETAFPV_Configurator --platform=linux  --arch=x64 --out=./Linux   --app-version=1.1.0 --overwrite --icon=./BETAFPV_ICO.ico",
     "package-mac": "electron-packager . BETAFPV_Configurator --platform=darwin  --arch=x64 --out=./Mac   --app-version=1.1.0 --overwrite --icon=./BETAFPV_LOGO.icns"
@@ -29,15 +30,15 @@
     "md5": "^2.3.0",
     "node-hid": "^2.1.1",
     "semver": "^7.3.5",
-    "serialport": "^9.2.0",
+    "serialport": "^9.2.8",
     "switchery-latest": "^0.8.2",
     "three": "~0.97.0",
-    "underscore": "^1.13.1",
-    "usb": "^1.7.1"
+    "underscore": "^1.13.2",
+    "usb": "^2.2.0"
   },
   "devDependencies": {
     "electron": "^13.1.7",
-    "electron-rebuild": "^3.2.3"
+    "electron-rebuild": "^3.2.7"
   },
   "repository": {
     "type": "git",
